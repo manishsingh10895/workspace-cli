@@ -1,10 +1,7 @@
 use db::{fetch_all_workspaces, insert_new_workspace};
-use predicates::boolean;
 use structopt::StructOpt;
-use colored::*;
 use exitfailure::ExitFailure;
 use workspace::Workspace;
-use cursive::views::{TextView, Dialog};
 
 use crate::visual::run_visual;
 mod visual;

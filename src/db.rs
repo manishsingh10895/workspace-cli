@@ -88,12 +88,12 @@ pub fn insert_new_workspace(workspace: Workspace) -> Result<usize> {
     Ok(inserted_id)
 }
 
-pub fn get_dirs_for_workspace(workspaceId: i32) -> Result<Vec<(i32, String)>> {
+pub fn get_dirs_for_workspace(workspace_id: i32) -> Result<Vec<(i32, String)>> {
     let conn = connect_db()?;
 
     let mut stmt = conn.prepare("SELECT d.id, d.path from dirs d where workspaceId = ?1")?;
 
-    let paths = stmt.query_map([workspaceId], |row| {
+    let paths = stmt.query_map([workspace_id], |row| {
         let path: String = row.get(1).unwrap();
         let id: i32 = row.get(0).unwrap();
         return Ok((id, path));
@@ -104,10 +104,10 @@ pub fn get_dirs_for_workspace(workspaceId: i32) -> Result<Vec<(i32, String)>> {
     Ok(paths)
 }
 
-pub fn remove_dir_from_workspace(dirId: i32) -> Result<()> {
+pub fn remove_dir_from_workspace(dir_id: i32) -> Result<()> {
     let conn = connect_db()?;
 
-    let rows = conn.execute("DELETE from dirs where id = ?1", params![dirId])?;
+    let rows = conn.execute("DELETE from dirs where id = ?1", params![dir_id])?;
 
     if rows == 0 {
         return Err(rusqlite::Error::InvalidQuery);
@@ -162,6 +162,7 @@ pub fn fetch_all_workspaces() -> Result<Vec<(i32, String)>, Error> {
     return Ok(values);
 }
 
+#[allow(dead_code)]
 pub fn fetch_all_workspaces_with_dirs() {
     let conn = connect_db().unwrap();
 
@@ -196,7 +197,6 @@ mod tests {
     use crate::db::*;
 
     fn connect_test_db() -> Result<Connection> {
-        let path = home_dir().unwrap();
         let path = format!("./test.db");
         let conn = Connection::open(path)?;
 
